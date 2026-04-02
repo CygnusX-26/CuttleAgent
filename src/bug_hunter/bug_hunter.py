@@ -36,7 +36,7 @@ class BugHunter:
         if os.environ.get("TAVILY_API_KEY"):
             tools.append(TavilySearch())
         else:
-            logger.warning(
+            raise ValueError(
                 "TAVILY_API_KEY not set, TavilySearch tool will not be available."
             )
 
