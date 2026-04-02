@@ -1,0 +1,20 @@
+services:
+  cuttleagent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./apps:/work/apps:ro
+      - ./findings:/work/findings
+    command:
+      [
+        "python",
+        "-m",
+        "src.main",
+        "--input-dir",
+        "/work/apps",
+        "--output-dir",
+        "/work/findings",
+      ]

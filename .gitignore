@@ -1,7 +1,6 @@
 apps
 findings
 .python-version
-compose.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
