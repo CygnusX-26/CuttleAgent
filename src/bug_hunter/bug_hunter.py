@@ -4,34 +4,35 @@ from pathlib import Path
 from typing import Any, Iterator, cast
 
 from langchain.agents import create_agent
+from langchain.tools import BaseTool
 from langchain_community.agent_toolkits import FileManagementToolkit
 from langchain_core.messages import HumanMessage
 from langchain_tavily import TavilySearch
 
 from src.bug_hunter.prompts import BUG_HUNTER_PROMPT
 from src.models import Agent
-from src.tools.artifact_analyzer import analyze_artifact
 
 logger = getLogger(__name__)
 
 
 class BugHunter:
-    def __init__(self, challenge_dir: Path, output_dir: Path, model: Agent) -> None:
-        self.challenge_dir = challenge_dir
+    def __init__(
+        self,
+        input_dir: Path,
+        output_dir: Path,
+        model: Agent,
+        artifact_analyzer: BaseTool,
+    ) -> None:
+        self.input_dir = input_dir
         self.output_dir = output_dir
 
-        challenge_dir_toolkit = FileManagementToolkit(
-            root_dir=str(challenge_dir), selected_tools=["read_file", "list_directory"]
-        )
-
-        output_dir_toolkit = FileManagementToolkit(
+        findings_dir_toolkit = FileManagementToolkit(
             root_dir=str(output_dir), selected_tools=["write_file"]
         )
 
         tools = []
-        tools.extend(challenge_dir_toolkit.get_tools())
-        tools.extend(output_dir_toolkit.get_tools())
-        tools.append(analyze_artifact)
+        tools.extend(findings_dir_toolkit.get_tools())
+        tools.append(artifact_analyzer)
 
         if os.environ.get("TAVILY_API_KEY"):
             tools.append(TavilySearch())
@@ -48,9 +49,10 @@ class BugHunter:
 
     def find_cves(self) -> Iterator[dict[str, Any]]:
         user_prompt = (
-            f"Analyze the challenge directory at {self.challenge_dir}. "
-            f"Write REPORT.md and one Markdown report per app into {self.output_dir}. "
-            "Process one app at a time, use local version evidence first, and research "
+            f"Analyze the apps in the directory at {self.input_dir}. "
+            "Write REPORT.md and one Markdown report per app "
+            "using the provided file management toolkit. "
+            "Process one app at a time, research "
             "only known public vulnerabilities."
         )
         inputs = {"messages": [HumanMessage(content=user_prompt)]}

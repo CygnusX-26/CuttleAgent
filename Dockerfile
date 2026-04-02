@@ -3,7 +3,7 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /work
+WORKDIR /
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     aapt \
@@ -16,12 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml uv.lock ./
-COPY src ./src
-
 RUN pip install --no-cache-dir uv \
     && uv pip install --system .
 
-RUN mkdir -p /work/apps /work/findings
-
-# CMD ["python", "-m", "src.main", "--input-dir", "/work/apps", "--output-dir", "/work/findings"]
+RUN mkdir -p /apps
