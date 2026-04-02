@@ -12,13 +12,11 @@ class Agent(str, Enum):
 
     def initialize(self) -> str:
         match self:
-            case Agent.GEMINI_3_1_PRO_PREVIEW:
-                if not os.environ.get("GOOGLE_API_KEY"):
-                    raise ValueError("GOOGLE_API_KEY environment variable not set")
-            case Agent.GEMINI_2_5_PRO:
-                if not os.environ.get("GOOGLE_API_KEY"):
-                    raise ValueError("GOOGLE_API_KEY environment variable not set")
-            case Agent.GEMINI_2_5_FLASH:
+            case (
+                Agent.GEMINI_3_1_PRO_PREVIEW
+                | Agent.GEMINI_2_5_PRO
+                | Agent.GEMINI_2_5_FLASH
+            ):
                 if not os.environ.get("GOOGLE_API_KEY"):
                     raise ValueError("GOOGLE_API_KEY environment variable not set")
 
@@ -26,9 +24,9 @@ class Agent(str, Enum):
 
     def create_agent(self) -> ChatGoogleGenerativeAI:
         match self:
-            case Agent.GEMINI_3_1_PRO_PREVIEW:
-                return ChatGoogleGenerativeAI(model=self.value)
-            case Agent.GEMINI_2_5_PRO:
-                return ChatGoogleGenerativeAI(model=self.value)
-            case Agent.GEMINI_2_5_FLASH:
+            case (
+                Agent.GEMINI_3_1_PRO_PREVIEW
+                | Agent.GEMINI_2_5_PRO
+                | Agent.GEMINI_2_5_FLASH
+            ):
                 return ChatGoogleGenerativeAI(model=self.value)

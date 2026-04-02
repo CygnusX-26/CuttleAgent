@@ -31,7 +31,7 @@ class AnalysisContainer:
             image=self.image,
             command=["sleep", "infinity"],
             detach=True,
-            volumes={str(input_dir): {"bind": self.MOUNT_DIR, "mode": "ro"}},
+            volumes={str(input_dir): {"bind": self.MOUNT_DIR, "mode": "rw"}},
             name=f"cuttleagent-analysis-{token_hex(4)}",
         )
 

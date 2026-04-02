@@ -5,7 +5,6 @@ from typing import Any, Iterator, cast
 
 from langchain.agents import create_agent
 from langchain.tools import BaseTool
-from langchain_community.agent_toolkits import FileManagementToolkit
 from langchain_core.messages import HumanMessage
 from langchain_tavily import TavilySearch
 
@@ -26,12 +25,7 @@ class BugHunter:
         self.input_dir = input_dir
         self.output_dir = output_dir
 
-        findings_dir_toolkit = FileManagementToolkit(
-            root_dir=str(output_dir), selected_tools=["write_file"]
-        )
-
         tools = []
-        tools.extend(findings_dir_toolkit.get_tools())
         tools.append(artifact_analyzer)
 
         if os.environ.get("TAVILY_API_KEY"):
@@ -50,10 +44,9 @@ class BugHunter:
     def find_cves(self) -> Iterator[dict[str, Any]]:
         user_prompt = (
             f"Analyze the apps in the directory at {self.input_dir}. "
-            "Write REPORT.md and one Markdown report per app "
-            "using the provided file management toolkit. "
-            "Process one app at a time, research "
-            "only known public vulnerabilities."
+            f"Write REPORT.md in {self.input_dir}/findings."
+            f"Write the per-app app_name.md, and poc.md in {self.input_dir}/findings/app_name directory"
+            "Process one app at a time, research only known public vulnerabilities."
         )
         inputs = {"messages": [HumanMessage(content=user_prompt)]}
 
