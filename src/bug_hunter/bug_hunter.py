@@ -59,7 +59,6 @@ class BugHunter:
             BugHunter.stream_output_to_console(self.write_final_report())
         finally:
             self.analysis_container.stop()
-            self.analysis_container.remove()
 
     def analyze_app(self, container_app_path: Path) -> Iterator[dict[str, Any]]:
         user_prompt = f"""Analyze only this APK: {container_app_path}
@@ -83,7 +82,7 @@ class BugHunter:
 
     def write_final_report(self) -> Iterator[dict[str, Any]]:
         user_prompt = f"""
-        Read all per-app reports in {self.analysis_container.OUTPUT_MOUNT} and write REPORT.md.
+        Read all per-app reports in {self.analysis_container.OUTPUT_MOUNT} and write REPORT.md in {self.analysis_container.OUTPUT_MOUNT}.
 
         Tasks:
         - summarize highest-confidence findings
