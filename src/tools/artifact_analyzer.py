@@ -10,7 +10,8 @@ logger = getLogger(__name__)
 
 
 class AnalysisContainer:
-    MOUNT_DIR: str = "/work/apps"
+    INPUT_MOUNT: str = "/work/apps"
+    OUTPUT_MOUNT: str = "/work/findings"
 
     def __init__(self, image_tag: str, dockerfile_path: Path):
         self.docker = docker.from_env()
@@ -24,16 +25,31 @@ class AnalysisContainer:
             )
         self.container = None
 
-    def start(self, input_dir: Path) -> None:
+    def start(self, input_dir: Path, output_dir: Path) -> None:
         if self.container is not None:
             return None
         self.container = self.docker.containers.run(
             image=self.image,
             command=["sleep", "infinity"],
             detach=True,
-            volumes={str(input_dir): {"bind": self.MOUNT_DIR, "mode": "rw"}},
+            volumes={
+                str(input_dir): {"bind": self.INPUT_MOUNT, "mode": "ro"},
+                str(output_dir): {"bind": self.OUTPUT_MOUNT, "mode": "rw"},
+            },
             name=f"cuttleagent-analysis-{token_hex(4)}",
+            remove=True,
         )
+
+    def list_input_dir(self) -> list[Path]:
+        if self.container is None:
+            return []
+        exit_code, output = self.container.exec_run(
+            f"find {self.INPUT_MOUNT} -maxdepth 1 -mindepth 1"
+        )
+
+        if exit_code != 0:
+            raise RuntimeError(output.decode())
+        return [Path(line) for line in output.decode().splitlines()]
 
     def exec(self, command: list[str]) -> str | None:
         if self.container is None:

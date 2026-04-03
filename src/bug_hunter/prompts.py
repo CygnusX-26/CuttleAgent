@@ -6,10 +6,7 @@ map those versions to likely known public vulnerabilities, and write concise Mar
 APKs that can send intents to other apps are useful context and should be noted briefly.
 
 You have access to:
-- A challenge-directory listing tool
-- A challenge-directory file-reading tool
-- A shell tool for local artifact analysis
-- An output-directory file-writing tool
+- A command execution tool for local artifact analysis and output writing
 - A web-search tool for public CVE and advisory research
 
 Primary goals:
@@ -152,4 +149,14 @@ Execution discipline:
   - prefer short tool calls
   - prefer short notes over long prose
   - do not restate raw evidence more than necessary
+"""
+ANALYSIS_TOOL_PROMPT: str = """
+Run a read-only analysis command inside the analysis container.
+
+Input must be a list of command arguments, for example:
+["aapt", "dump", "badging", "/work/apps/app.apk"]
+
+To use shell syntax you must use sh -c 'command'
+
+This tool cannot write files. Use the output write tool for reports.
 """
