@@ -4,12 +4,13 @@ from secrets import token_hex
 
 import docker
 import docker.errors
-from langchain.tools import BaseTool, tool
+
+from src.tools.command_runtime import CommandRuntime
 
 logger = getLogger(__name__)
 
 
-class AnalysisContainer:
+class ArtifactAnalyzerRuntime(CommandRuntime):
     INPUT_MOUNT: str = "/work/apps"
     OUTPUT_MOUNT: str = "/work/findings"
 
@@ -69,19 +70,3 @@ class AnalysisContainer:
             logger.warning("Tried to remove non-existent container.")
             return None
         self.container.remove()
-
-
-def create_analyze_artifact_tool(
-    container: AnalysisContainer, description: str
-) -> BaseTool:
-    @tool(description=description)
-    def analyze_artifact(command: list[str]) -> str:
-        try:
-            result = container.exec(command)
-            if result is None:
-                raise Exception("Result was None")
-            return result
-        except Exception as e:
-            return f"Error: {str(e)}"
-
-    return analyze_artifact

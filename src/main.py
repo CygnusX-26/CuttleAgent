@@ -51,14 +51,19 @@ def main(
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    hunter = BugHunter(
+    # run the bug hunter
+    bug_hunter = BugHunter(
         input_dir=input_dir,
         output_dir=output_dir,
         model=model,
         dockerfile_path=dockerfile,
     )
 
-    hunter.run()
+    bug_hunter.run()
+
+    # run the exploit writer
+
+    # run the exploit chainer
 
 
 if __name__ == "__main__":
