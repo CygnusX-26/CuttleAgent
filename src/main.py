@@ -33,9 +33,9 @@ def main(
         resolve_path=True,
         help="Directory for output reports, pocs, and exploits.",
     ),
-    dockerfile: Path = typer.Option(
-        "Dockerfile",
-        "--dockerfile",
+    bug_hunter_dockerfile: Path = typer.Option(
+        "bug_hunter.Dockerfile",
+        "--bug-hunter-dockerfile",
         file_okay=True,
         dir_okay=False,
         resolve_path=True,
@@ -56,7 +56,7 @@ def main(
         input_dir=input_dir,
         output_dir=output_dir,
         model=model,
-        dockerfile_path=dockerfile,
+        dockerfile_path=bug_hunter_dockerfile,
     )
 
     bug_hunter.run()

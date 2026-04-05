@@ -19,6 +19,7 @@ class AdbRuntime(CommandRuntime):
         # todo search if serial is None fo rthe default device
 
     def exec(self, command: list[str]) -> str | None:
+        # todo
         pass
 
     @staticmethod
