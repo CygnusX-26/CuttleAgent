@@ -57,7 +57,7 @@ class CuttlefishCli:
     def _build_launch_command(self, record: InstanceRecord, selinux: bool) -> list[str]:
         config = record.config
         command = [self.settings.create_binary]
-        if selinux:
+        if not selinux:
             command.append("-extra_kernel_cmdline")
             command.append("androidboot.selinux=permissive")
         command.extend(
