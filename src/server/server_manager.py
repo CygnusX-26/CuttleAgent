@@ -126,7 +126,7 @@ class CuttlefishServerManager:
             self.db.upsert(record)
 
         try:
-            launch_result = self.cli.start_instance(record)
+            launch_result = self.cli.start_instance(record, config.selinux)
         except Exception as exc:
             record.state = InstanceState.CRASHED
             record.failure_reason = str(exc)

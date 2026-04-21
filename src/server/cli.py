@@ -21,11 +21,11 @@ class CuttlefishCli:
     def __init__(self, settings: CuttlefishSettings) -> None:
         self.settings = settings
 
-    def start_instance(self, record: InstanceRecord) -> LaunchResult:
+    def start_instance(self, record: InstanceRecord, selinux: bool) -> LaunchResult:
         runtime_dir = Path(record.runtime_dir)
         runtime_dir.mkdir(parents=True, exist_ok=True)
 
-        command = self._build_launch_command(record)
+        command = self._build_launch_command(record, selinux)
         subprocess.run(
             command,
             cwd=runtime_dir,
@@ -54,10 +54,12 @@ class CuttlefishCli:
             text=True,
         )
 
-    def _build_launch_command(self, record: InstanceRecord) -> list[str]:
+    def _build_launch_command(self, record: InstanceRecord, selinux: bool) -> list[str]:
         config = record.config
         command = [self.settings.create_binary]
-
+        if selinux:
+            command.append("-extra_kernel_cmdline")
+            command.append("androidboot.selinux=permissive")
         command.extend(
             [
                 "-base_instance_num",
