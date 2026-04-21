@@ -42,6 +42,7 @@ def main(
         help="Dockerfile to run commands in.",
     ),
     model: Agent = typer.Option(
+        Agent.GPT_5_1,
         "--model",
         help="LangChain model identifier to use for the agent.",
     ),

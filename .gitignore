@@ -1,6 +1,8 @@
 apps
 findings
 .python-version
+challenge-3*
+challenge-4-*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
